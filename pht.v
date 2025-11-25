@@ -80,7 +80,11 @@ module pht #(parameter INDEX_SIZE = 8, parameter TAG_SIZE = 4, parameter GHR_LEN
             if(enable_use) pht_uses_enable[index] <= 1;
             else pht_uses_enable[index] <= 0; //Maintain 1 clock edge of updating
             //Allocation is ocurring
-            if(alloc) pht_alloc[index] <= 1;
+            if(alloc)
+            begin
+                pht_alloc[index] <= 1; 
+                tag_vals[index] <= tag;
+            end
             else pht_alloc[index] <= 0; //Maintain 1 clock edge of updating              
         end
     end
