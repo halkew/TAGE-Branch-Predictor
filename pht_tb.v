@@ -24,24 +24,24 @@ initial begin
     enable_use = 0;
     update_use = 0;
     
-    # 5 
+    # 10 
 
     reset = 1;
 
-    # 5
+    # 10
     
     reset = 0;
     GHR = 1;
     PC = 2;
 
-    # 5
+    # 10
 
     alloc = 0;
     br_dir = 0;
     br_ret = 1;
     enable_use = 0;
 
-    # 5
+    # 10
     
     alloc = 1;
     br_dir = 1;
@@ -49,7 +49,7 @@ initial begin
     enable_use = 1;
     update_use = 0;
 
-    # 5
+    # 10
 
     alloc = 0;
     br_dir = 0;
@@ -57,18 +57,18 @@ initial begin
     enable_use = 1;
     update_use = 1;
 
-    # 5
+    # 10
 
     GHR = 2;
 
-    # 5
+    # 10
 
     alloc = 0;
     br_dir = 0;
     br_ret = 1;
     enable_use = 0;
 
-    # 5
+    # 10
     
     alloc = 1;
     br_dir = 1;
@@ -76,7 +76,7 @@ initial begin
     enable_use = 1;
     update_use = 0;
 
-    # 5
+    # 10
 
     alloc = 0;
     br_dir = 0;
@@ -84,18 +84,18 @@ initial begin
     enable_use = 1;
     update_use = 1;
 
-    # 5 
+    # 10
 
     PC = 3;
 
-    # 5
+    # 10
     
     alloc = 0;
     br_dir = 0;
     br_ret = 1;
     enable_use = 0;
 
-    # 5
+    # 10
     
     alloc = 1;
     br_dir = 1;
@@ -103,7 +103,7 @@ initial begin
     enable_use = 1;
     update_use = 0;
 
-    # 5
+    # 10
 
     alloc = 0;
     br_dir = 0;
@@ -111,16 +111,14 @@ initial begin
     enable_use = 1;
     update_use = 1;
 
-    # 5 
+    # 10
 
     reset = 1;
-
-    # 10
 
 end
 
 always begin
-    #10 clk = !clk;
+    #5 clk = !clk;
 end
 
 pht pht1 (
@@ -131,11 +129,11 @@ pht pht1 (
     .alloc(alloc),
     .br_dir(br_dir),
     .br_ret(br_ret),
-    .enable_use(enabule_use),
+    .enable_use(enable_use),
     .update_use(update_use),
     .can_alloc(can_alloc),
     .prediction(prediction),
     .match(match)
-)
+);
 
 endmodule
