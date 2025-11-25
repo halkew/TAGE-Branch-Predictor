@@ -24,7 +24,7 @@ module use_ctr(
     );
     
     reg [1:0] ctr = 0;
-    assign useful = ctr[1];
+    assign useful = ctr[1] || ctr[0];
     
     always @ (posedge clk)
     begin
