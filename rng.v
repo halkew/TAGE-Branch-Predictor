@@ -4,6 +4,7 @@
 
 module rng(
     input [7:0] maxVal,
+    input clk,
     output [7:0] randomVal
 );
 
