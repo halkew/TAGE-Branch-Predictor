@@ -116,11 +116,26 @@ initial begin
     reset = 1;
 
     # 10
-    
+
 end
 
 always begin
     #10 clk = !clk;
 end
+
+pht pht1 (
+    .clk(clk),
+    .reset(reset),
+    .GHR(GHR),
+    .PC(PC),
+    .alloc(alloc),
+    .br_dir(br_dir),
+    .br_ret(br_ret),
+    .enable_use(enabule_use),
+    .update_use(update_use),
+    .can_alloc(can_alloc),
+    .prediction(prediction),
+    .match(match)
+)
 
 endmodule
