@@ -12,13 +12,14 @@ module bpi(
     input clk,
     input alloc,
     output fetch,
-    output [15:0] PC_o,
-    output br_ret,
-    output br_dir
+    output reg [15:0] PC_o,
+    output reg br_ret,
+    output reg br_dir,
+    output reg [63:0] ghr
 );
 
-    reg [15:0] PC_o;
-    reg fetch, br_ret, br_dir;
+    // reg [15:0] PC_o;
+    // reg fetch, br_ret, br_dir;
 
     reg [1:0] state;
     reg [1:0] next_state;
@@ -38,6 +39,7 @@ module bpi(
             PC_o <= 16'b0;
             br_ret <= 1'b0;
             br_dir <= 1'b0;
+            ghr <= 64'b0;
         end
 
         else begin
@@ -45,6 +47,7 @@ module bpi(
                 2'b00: begin
                     fetch <= 1'b1;
                     br_ret <= 1'b0;
+                    ghr <= {ghr[62:0], taken};
                 end
                 2'b01: begin
                     fetch <= 1'b0;
