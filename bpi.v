@@ -17,6 +17,7 @@ module bpi(
 );
 
     reg [15:0] PC_o;
+    reg fetch, br_ret, br_dir;
 
     reg [1:0] state;
     reg [1:0] next_state;
