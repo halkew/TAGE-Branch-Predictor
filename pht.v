@@ -22,7 +22,7 @@
 */
 
 
-module pht #(parameter INDEX_SIZE = 8, parameter TAG_SIZE = 4, parameter GHR_LEN = 4)
+module pht #(parameter INDEX_SIZE = 8, parameter TAG_SIZE = 8, parameter GHR_LEN = 4)
     (
     input reset,
     input clk,
@@ -40,10 +40,21 @@ module pht #(parameter INDEX_SIZE = 8, parameter TAG_SIZE = 4, parameter GHR_LEN
     
     wire [GHR_LEN - 1: 0] GHR_usable = GHR[GHR_LEN-1:0];
     
+    wire [INDEX_SIZE - 1 : 0] folded_pc;
+    wire [INDEX_SIZE - 1 : 0] folded_ghr;
+    wire [TAG_SIZE - 1 : 0] folded_ghr_1;
+    wire [TAG_SIZE - 2 : 0] folded_ghr_2;
+
     //Manually change this shit if adjusting pht index or tag values
-    wire [INDEX_SIZE - 1:0] index = {4'b0000,GHR_usable[GHR_LEN-1:0]} ^ PC[15:8] ^ PC[7:0];
-    
-    wire [TAG_SIZE - 1:0] tag = PC[TAG_SIZE - 1:0] ^ GHR_usable[TAG_SIZE - 1: 0] ^ {GHR_usable[TAG_SIZE - 2:0],1'b0};
+    //pc_folder to folder_[index size]b, ghr_folder to folder_[index size]b, ghr_1_folder to folder_[tag size]b, and ghr_2_folder to folder_[tag size - 1]b
+    folder_8b pc_folder(.fold(PC), .folded(folded_pc));
+    folder_8b ghr_folder(.fold(PC), .folded(folded_ghr));
+    folder_8b ghr_1_folder(.fold(GHR_usable), .folded(folded_ghr_1));
+    folder_7b ghr_2_folder(.fold(GHR_usable), .folded(folded_ghr_2));
+
+   
+    wire [INDEX_SIZE - 1:0] index = folded_pc ^ folded_ghr;
+    wire [TAG_SIZE - 1:0] tag = PC[TAG_SIZE - 1:0] ^ folded_ghr_1 ^ (folded_ghr_2 << 1);
     
     //Pred Counter Control Regs
     wire [(2**INDEX_SIZE) - 1:0] pht_preds;
