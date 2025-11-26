@@ -52,7 +52,7 @@ module bpi(
                     br_ret <= 1'b0;
                     ghr <= {ghr[62:0], taken_i};
                     br_ret <= 1'b0;
-                    br_dir <= 1'b0
+                    br_dir <= 1'b0;
                 end
                 2'b01: begin
                     fetch <= 1'b0;
