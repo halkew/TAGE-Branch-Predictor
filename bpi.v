@@ -10,6 +10,7 @@ module bpi(
     input taken_i,
     input reset,
     input clk,
+    input alloc,
     output fetch,
     output [15:0] PC_o,
     output br_ret,
@@ -50,8 +51,14 @@ module bpi(
                     PC_o <= PC;
                 end
                 2'b10: begin
-                    br_ret <= 1'b1;
-                    br_dir <= taken_i;
+                    if (!alloc) begin
+                        br_ret <= 1'b1;
+                        br_dir <= taken;
+                    end else begin
+                        br_ret <= 1'b0;
+                        br_dir <= 1'b0;
+                    end
+                    
                 end
             endcase
         end
