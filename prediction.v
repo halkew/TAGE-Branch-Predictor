@@ -9,7 +9,7 @@ module prediction #(parameter PHT_COUNT = 3)
     input acc_result,
     output reg [PHT_COUNT:1] enable_use,
     output reg [PHT_COUNT:1] update_use,
-    output [PHT_COUNT:1] alloc,
+    output reg [PHT_COUNT:1] alloc,
     output final_pred
     );
 
@@ -21,7 +21,6 @@ module prediction #(parameter PHT_COUNT = 3)
     integer i;
 
     assign final_pred = prediction[pred] >> 2;
-    assign alloc[to_alloc] = (needs_alloc) ? 1 : 0;
 
     always @ (posedge clk)
     begin
@@ -75,11 +74,15 @@ module prediction #(parameter PHT_COUNT = 3)
 
                 state <= 3;
             end
-            3: begin // reinit
+            3: begin // reinit and send alloc
                 pred <= 0;
                 altpred <= 0;
                 enable_use[pred] <= 0;
                 to_alloc <= 1;
+                needs_alloc <= 0;
+                if (needs_alloc) begin
+                    alloc[to_alloc] <= 1;
+                end
 
                 state <= 0;
             end
