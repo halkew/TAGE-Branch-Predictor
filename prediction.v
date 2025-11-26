@@ -27,7 +27,6 @@ module prediction #(parameter PHT_COUNT = 3)
     begin
         if (reset)
         begin
-            pred <= 0;
             altpred <= 0;
             state <= 0;
             to_alloc <= 1;
@@ -75,7 +74,6 @@ module prediction #(parameter PHT_COUNT = 3)
                 state <= 3;
             end
             3: begin // reinit and send alloc
-                pred <= 0;
                 altpred <= 0;
                 enable_use[pred] <= 0;
                 to_alloc <= 1;
