@@ -47,7 +47,8 @@ module bpi(
         end
 
         else begin
-            case (next_state)
+            state <= next_state;
+            case (state)
                 2'b00: begin
                     fetch <= 1'b1;
                     br_ret <= 1'b0;
