@@ -27,6 +27,7 @@ module base_pred #(parameter INDEX_LEN = 8)
     wire [(2**INDEX_LEN) - 1:0] table_preds;
     
     reg [(2**INDEX_LEN) - 1:0] table_enable;
+    reg br_ret_reg = 0;
     
     assign prediction = table_preds[PC];
     
@@ -36,6 +37,7 @@ module base_pred #(parameter INDEX_LEN = 8)
         begin
             //On reset
             table_enable <= 0;
+            br_ret_reg <= 0;
         end
         else
         begin
@@ -43,11 +45,13 @@ module base_pred #(parameter INDEX_LEN = 8)
             if(br_ret)
             begin
                 table_enable[PC] <= 1;
+                br_ret_reg <= 1;
             end
             else
             begin
             //Might change this to be implemented on the negedge
-                table_enable[PC] <= 0;
+                table_enable <= 0;
+                br_ret_reg <= 0;
             end
         end
     end
@@ -63,7 +67,7 @@ module base_pred #(parameter INDEX_LEN = 8)
                 .clk(clk),
                 .reset(reset),
                 .alloc(1'b0),
-                .update(br_dir),
+                .update(br_ret_reg),
                 .enable(table_enable[i]),
                 .pred(table_preds[i])
             );

@@ -19,23 +19,32 @@
 module accuracy(
     input taken_i,
     input clk,
+    input reset,
     input check,
     input prediction,
     output taken_o,
-    output [2047:0] branches,
-    output [2047:0] correct 
+    output [12:0] branches,
+    output [12:0] correct 
     );
     
-    reg [2047:0] branch_ctr = 0;
-    reg [2047:0] correct_reg = 0;
+    reg [15:0] branch_ctr;
+    reg [15:0] correct_reg;
+    
+    assign branches = branch_ctr;
+    assign correct = correct_reg;
     
     assign taken_o = taken_i;
     
-    wire compare = taken_i && prediction;
+    wire compare = !(taken_i ^ prediction);
     
     always @ (posedge clk)
     begin
-        if(check)
+        if(reset)
+        begin
+            branch_ctr <= 0;
+            correct_reg <= 0;
+        end
+        else if(check)
         begin
             //Check determines when the new instruction occurs
             branch_ctr <= branch_ctr + 1;

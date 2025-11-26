@@ -10,7 +10,7 @@ module top_bp(
     
 //Memory Module
 wire fetch;
-memory mem_mod( .clk(clk), .fetch(fetch), .PC(PC),.taken(taken));
+memory mem_mod( .clk(clk), .fetch(fetch), .PC(PC),.taken(taken), .reset(reset));
 
 //Branch Predictor Interface Module
 wire [15:0] bpi_PC;
@@ -31,13 +31,15 @@ bpi branch_interface_mod(
 
 //Base Predictor Module
 wire base_prediction;
+wire base_br_ret;
+wire base_br_dir;
 base_pred #(.INDEX_LEN(8)) base_pred_module
     (
     .clk(clk),
     .reset(reset),
     .PC(bpi_PC[7:0]),
-    .br_ret(br_ret),
-    .br_dir(br_dir),
+    .br_ret(base_br_ret),
+    .br_dir(base_br_dir),
     .prediction(base_prediction)
     );
 
@@ -121,7 +123,9 @@ wire check_out;
 wire final_pred;
 assign cur_prediction = final_pred;
 wire taken_o;
-prediction #(.PHT_COUNT(3)) pred_logic
+
+//Varun's Module
+pred_logic_vm #(.PHT_COUNT(3)) pred_logic
     (
     .reset(reset),
     .clk(clk),
@@ -133,15 +137,36 @@ prediction #(.PHT_COUNT(3)) pred_logic
     .check(check_out),
     .enable_use({pht3_enable_use,pht2_enable_use,pht1_enable_use}),
     .update_use({pht3_update_use,pht2_update_use,pht1_update_use}),
+    .br_ret({pht3_br_ret,pht2_br_ret,pht1_br_ret,base_br_ret}),
+    .br_dir({pht3_br_dir,pht2_br_dir,pht1_br_dir,base_br_dir}),
     .alloc({pht3_alloc,pht2_alloc,pht1_alloc}),
     .final_pred(final_pred),
     .needs_alloc(pred_logic_alloc)
     );
 
+//Alex Module
+//prediction #(.PHT_COUNT(3)) pred_logic
+//    (
+//    .reset(reset),
+//    .clk(clk),
+//    .prediction({pht3_prediction,pht2_prediction,pht1_prediction,base_prediction}),
+//    .match({pht3_match,pht2_match,pht1_match}),
+//    .can_alloc({pht3_can_alloc,pht2_can_alloc,pht1_can_alloc}),
+//    .taken(taken_o),
+//    .stall_bpi(pred_logic_stall_bpi),
+//    .check(check_out),
+//    .enable_use({pht3_enable_use,pht2_enable_use,pht1_enable_use}),
+//    .update_use({pht3_update_use,pht2_update_use,pht1_update_use}),
+//    .alloc({pht3_alloc,pht2_alloc,pht1_alloc}),
+//    .final_pred(final_pred),
+//    .needs_alloc(pred_logic_alloc)
+//    );
+
 //Accuracy Module
 accuracy acc_mod(
     .taken_i(taken),
     .clk(clk),
+    .reset(reset),
     .check(check_out),
     .prediction(final_pred),
     .taken_o(taken_o),

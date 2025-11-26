@@ -13,12 +13,13 @@ Signals
 module memory(
     input clk,
     input fetch,
+    input reset,
     output [15:0] PC,
     output taken
     );
 
-    reg [16:0] ROM [1200:0];
-    reg [9:0] mem_index = 0;
+    reg [16:0] ROM [5000:0];
+    reg [16:0] mem_index = 0;
     
     reg [16:0] branch;
     assign PC = branch[16:1];
@@ -27,12 +28,17 @@ module memory(
     initial
     begin
         //Where the memory is being loaded in from
-        $readmemb("ece382m_rom.mem",ROM);
+        $readmemb("larger_tc.mem",ROM);
     end
     
-    always @(negedge clk)
+    always @(posedge clk)
     begin
-        if(fetch)
+        if(reset)
+        begin
+            mem_index <= 0;
+            branch <= ROM[mem_index];
+        end
+        else if(fetch)
         begin
             branch <= ROM[mem_index];
             mem_index <= mem_index + 1;
