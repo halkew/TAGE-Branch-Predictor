@@ -1,3 +1,15 @@
+/*
+This is a simple memory module that utilizes a 16 bit PC and a 1 bit 
+appended bit to represent if the branch is taken or not taken
+
+Signals
+- clk = input clock from the top module
+- fetch = a fetch signal that is triggered on the negative edge to load a new value from memory
+- PC = the PC of the loaded value
+- taken = shows if the branch is supposed to be predicted as taken or not taken
+
+*/
+
 module memory(
     input clk,
     input fetch,
@@ -5,7 +17,7 @@ module memory(
     output taken
     );
 
-    reg [16:0] ROM [999:0];
+    reg [16:0] ROM [1200:0];
     reg [9:0] mem_index = 0;
     
     reg [16:0] branch;
@@ -14,6 +26,7 @@ module memory(
     
     initial
     begin
+        //Where the memory is being loaded in from
         $readmemb("ece382m_rom.mem",ROM);
     end
     
