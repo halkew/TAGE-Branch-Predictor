@@ -43,6 +43,7 @@ module bpi(
             br_ret <= 1'b0;
             br_dir <= 1'b0;
             ghr <= 64'b0;
+            state <= 2'b00;
         end
 
         else begin
