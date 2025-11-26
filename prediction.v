@@ -63,7 +63,7 @@ module prediction #(parameter PHT_COUNT = 3)
                 state <= (acc_done) ? 2 : 1;
             end
             2: begin
-                if (prediction[altpred] >> 2 != prediction[pred][2] >> 2) begin // different provider and alternate predictions
+                if (prediction[altpred] >> 2 != prediction[pred] >> 2) begin // different provider and alternate predictions
                     if (acc_result == 1) begin // correct
                         enable_use[pred] <= 1;
                         update_use[pred] <= 1;
