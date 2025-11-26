@@ -6,18 +6,20 @@ module prediction #(parameter PHT_COUNT = 3)
     input [PHT_COUNT:1] match,
     input [PHT_COUNT:1] can_alloc,
     input taken,
+    output reg stall_bpi,
     output reg check,
     output reg [PHT_COUNT:1] enable_use,
     output reg [PHT_COUNT:1] update_use,
     output reg [PHT_COUNT:1] alloc,
-    output final_pred
+    output final_pred,
+    output reg needs_alloc
     );
 
     wire [$clog2(PHT_COUNT):0] pred = (match[3] ? 3 : (match[2] ? 2: (match[1] ? 1 : 0))); //index of provider
     reg [$clog2(PHT_COUNT):0] altpred; //index of alternate
     reg [1:0] state;
     reg [$clog2(PHT_COUNT):0] to_alloc;
-    reg needs_alloc;
+    // reg needs_alloc;
 
     integer i;
 
@@ -31,6 +33,7 @@ module prediction #(parameter PHT_COUNT = 3)
             state <= 0;
             to_alloc <= 1;
             check <= 0;
+            stall_bpi <= 0;
         end
         else 
         begin
@@ -44,6 +47,7 @@ module prediction #(parameter PHT_COUNT = 3)
                     end
                 end
                 check <= 1; // raises check flag
+                stall_bpi <= 1;
 
                 state <= 2;
             end
@@ -83,6 +87,7 @@ module prediction #(parameter PHT_COUNT = 3)
                 end
 
                 state <= 0;
+                stall_bpi <= 0;
             end
             default: begin
                 state <= 0;

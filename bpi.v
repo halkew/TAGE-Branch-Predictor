@@ -11,6 +11,7 @@ module bpi(
     input reset,
     input clk,
     input alloc,
+    input stall_bpi,
     output reg fetch,
     output reg [15:0] PC_o,
     output reg br_ret,
@@ -28,7 +29,9 @@ module bpi(
         case (state)
             2'b00: next_state <= 2'b01;
             2'b01: next_state <= 2'b10;
-            2'b10: next_state <= 2'b00;
+            2'b10: begin
+                next_state <= (stall_bpi) ? 2'b10 : 2'b00;
+            end
             default: next_state <= 2'b00;
         endcase
     end
@@ -48,6 +51,8 @@ module bpi(
                     fetch <= 1'b1;
                     br_ret <= 1'b0;
                     ghr <= {ghr[62:0], taken_i};
+                    br_ret <= 1'b0;
+                    br_dir <= 1'b0
                 end
                 2'b01: begin
                     fetch <= 1'b0;
