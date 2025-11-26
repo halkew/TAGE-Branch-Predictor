@@ -37,7 +37,7 @@ initial begin
     # 10
 
     alloc = 0;
-    br_dir = 0;
+    br_dir = 1;
     br_ret = 1;
     enable_use = 0;
 
@@ -45,7 +45,7 @@ initial begin
     
     alloc = 1;
     br_dir = 1;
-    br_ret = 1;
+    br_ret = 0;
     enable_use = 1;
     update_use = 0;
 
@@ -72,14 +72,14 @@ initial begin
     
     alloc = 1;
     br_dir = 1;
-    br_ret = 1;
+    br_ret = 0;
     enable_use = 1;
     update_use = 0;
 
     # 10
 
     alloc = 0;
-    br_dir = 0;
+    br_dir = 1;
     br_ret = 1;
     enable_use = 1;
     update_use = 1;
@@ -99,14 +99,14 @@ initial begin
     
     alloc = 1;
     br_dir = 1;
-    br_ret = 1;
+    br_ret = 0;
     enable_use = 1;
     update_use = 0;
 
     # 10
 
     alloc = 0;
-    br_dir = 0;
+    br_dir = 1;
     br_ret = 1;
     enable_use = 1;
     update_use = 1;
