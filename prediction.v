@@ -5,18 +5,19 @@ module prediction #(parameter PHT_COUNT = 3)
     input [PHT_COUNT:0] prediction,
     input [PHT_COUNT:1] match,
     input [PHT_COUNT:1] can_alloc,
-    input acc_done,
-    input acc_result,
+    input taken,
+    output reg check,
     output reg [PHT_COUNT:1] enable_use,
     output reg [PHT_COUNT:1] update_use,
     output reg [PHT_COUNT:1] alloc,
     output final_pred
     );
 
-    reg [$clog2(PHT_COUNT):0] pred; //index of provider
+    wire [$clog2(PHT_COUNT):0] pred = (match[3] ? 3 : (match[2] ? 2: (match[1] ? 1 : 0))); //index of provider
     reg [$clog2(PHT_COUNT):0] altpred; //index of alternate
     reg [1:0] state;
-    reg to_alloc, needs_alloc;
+    reg [$clog2(PHT_COUNT):0] to_alloc;
+    reg needs_alloc;
 
     integer i;
 
@@ -30,17 +31,12 @@ module prediction #(parameter PHT_COUNT = 3)
             altpred <= 0;
             state <= 0;
             to_alloc <= 1;
+            check <= 0;
         end
         else 
         begin
             case (state)
             0: begin
-                // determine provider and alternate
-                for (i = 1; i < PHT_COUNT; i = i + 1) begin
-                    if (match[i]) begin
-                        pred <= i;
-                    end
-                end
 
                 // determine alternate
                 for (i = 1; i < pred; i = i + 1) begin
@@ -48,15 +44,19 @@ module prediction #(parameter PHT_COUNT = 3)
                         altpred <= i;
                     end
                 end
+                check <= 1; // raises check flag
 
-                state <= 1;
+                state <= 2;
             end
-            1: begin // stall until accuracy checker is done
-                state <= (acc_done) ? 2 : 1;
-            end
+            // 1: begin // raises check flag 
+            //     check <= 1;
+            //     state <= 2;
+            // end
             2: begin
+                check <= 0; // lowers check flag 
+
                 if (prediction[altpred] >> 2 != prediction[pred] >> 2) begin // different provider and alternate predictions
-                    if (acc_result == 1) begin // correct
+                    if (taken == 1) begin // correct
                         enable_use[pred] <= 1;
                         update_use[pred] <= 1;
                     end else begin // wrong
