@@ -10,16 +10,19 @@ Signals
 
 */
 
-module memory(
+module memory #(parameter test = 5000, parameter warmup = 30000)(
     input clk,
     input fetch,
     input reset,
     output [15:0] PC,
+    output reg test_mode,
     output taken
     );
 
-    reg [16:0] ROM [5000:0];
-    reg [16:0] mem_index = 0;
+    reg [16:0] ROM_warmup [warmup:0];
+    reg [16:0] ROM_test [test:0];
+    reg [16:0] warmup_index = 0;
+    reg [16:0] test_index = 0;
     
     reg [16:0] branch;
     assign PC = branch[16:1];
@@ -28,20 +31,34 @@ module memory(
     initial
     begin
         //Where the memory is being loaded in from
-        $readmemb("larger_tc.mem",ROM);
+        $readmemb("30k_warmup.mem",ROM_warmup);
+        $readmemb("60k_test1.mem",ROM_test);
     end
     
     always @(posedge clk)
     begin
         if(reset)
         begin
-            mem_index <= 0;
-            branch <= ROM[mem_index];
+            test_index <= 0;
+            warmup_index <= 0;
+            branch <= ROM_warmup[warmup_index];
+            test_mode <= 0;
         end
         else if(fetch)
         begin
-            branch <= ROM[mem_index];
-            mem_index <= mem_index + 1;
+            if(warmup_index < warmup)
+            begin
+                branch <= ROM_warmup[warmup_index];
+                warmup_index <= warmup_index + 1;
+                test_mode <= 0;
+            end
+            else
+            begin
+                branch <= ROM_test[test_index];
+                test_index <= test_index + 1;
+                test_mode <= 1;
+            end
+
         end
     end
     

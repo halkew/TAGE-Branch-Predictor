@@ -40,13 +40,27 @@ module pht_t3 #(parameter INDEX_SIZE = 4, parameter TAG_SIZE = 4, parameter GHR_
     wire [GHR_LEN - 1: 0] GHR_usable = GHR[GHR_LEN-1:0];
     
     //Manually change this shit if adjusting pht index or tag values
-    wire [INDEX_SIZE - 1:0] index = GHR_usable[3:0] ^ GHR_usable[9:4]  ^
-    GHR_usable[15:10] ^ GHR_usable[19:16] ^ GHR_usable[23:20] ^ GHR_usable[28:24] 
-    ^ GHR_usable[31:29] ^ GHR_usable[35:32] ^ GHR_usable[39:36] ^ GHR_usable[43:40]
-    ^ GHR_usable[47:44] ^ GHR_usable[51:48] ^ GHR_usable[55:52] ^ GHR_usable[59:56]
-    ^ GHR_usable[63:60] ^ PC[35:32];
+//    wire [INDEX_SIZE - 1:0] index = GHR_usable[3:0] ^ GHR_usable[9:4]  ^
+//    GHR_usable[15:10] ^ GHR_usable[19:16] ^ GHR_usable[23:20] ^ GHR_usable[28:24] 
+//    ^ GHR_usable[31:29] ^ GHR_usable[35:32] ^ GHR_usable[39:36] ^ GHR_usable[43:40]
+//    ^ GHR_usable[47:44] ^ GHR_usable[51:48] ^ GHR_usable[55:52] ^ GHR_usable[59:56]
+//    ^ GHR_usable[63:60] ^ PC[35:32];
+
+    wire [INDEX_SIZE - 1:0] index = 
+     GHR_usable[3:0] ^ GHR_usable[7:4] ^ GHR_usable[11:8] ^ GHR_usable[15:12]
+    ^GHR_usable[19:16] ^ GHR_usable[23:20] ^ GHR_usable[27:24] ^ GHR_usable[31:28]
+    ^GHR_usable[35:32] ^ GHR_usable[39:36] ^ GHR_usable[43:40] ^ GHR_usable[47:44]
+    ^GHR_usable[51:48] ^ GHR_usable[55:52] ^ GHR_usable[59:56] ^ GHR_usable[63:60];
     
-    wire [TAG_SIZE - 1:0] tag = PC[TAG_SIZE - 1:0] ^ GHR_usable[TAG_SIZE - 1: 0] ^ {GHR_usable[TAG_SIZE - 2:0],1'b0};
+    
+    wire [3:0] folded_ghr4;
+    wire [2:0] folded_ghr3;
+    wire [3:0] folded_pc;
+    folder_4b f1(.fold(GHR_usable),.folded(folded_ghr4));
+    folder_3b f2(.fold(GHR_usable),.folded(folded_ghr3));
+    folder_4b f3(.fold({48'b0,PC}),.folded(folded_pc));
+    
+    wire [TAG_SIZE - 1:0] tag = folded_pc ^ folded_ghr4 ^ {folded_ghr3,1'b0};
     
     //Pred Counter Control Regs
     wire [(2**INDEX_SIZE) - 1:0] pht_preds;
@@ -61,9 +75,11 @@ module pht_t3 #(parameter INDEX_SIZE = 4, parameter TAG_SIZE = 4, parameter GHR_
     reg [TAG_SIZE - 1:0] tag_vals [(2**INDEX_SIZE) - 1: 0];
     
     //Outputs
-    assign can_alloc = pht_uses[index];
+    assign can_alloc = pht_uses[index] == 0;
     assign prediction = pht_preds[index];
     assign match = tag_vals[index] == tag;
+    
+    integer r_var;
     
     //Main Logic
     always @(posedge clk)
@@ -74,6 +90,11 @@ module pht_t3 #(parameter INDEX_SIZE = 4, parameter TAG_SIZE = 4, parameter GHR_
             pht_enable <= 0;
             pht_alloc <= 0;
             pht_uses_enable <= 0;
+            //Reset the tag values:
+            for(r_var = 0; r_var < (2**INDEX_SIZE); r_var = r_var + 1)
+            begin
+                tag_vals[r_var] <= 0; 
+            end
         end
         else
         begin

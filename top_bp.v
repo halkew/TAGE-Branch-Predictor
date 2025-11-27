@@ -1,16 +1,21 @@
 module top_bp(
     input clk,
     input reset,
-    output [12:0] branches,
-    output [12:0] correct,
+    output [15:0] branches,
+    output [15:0] correct,
+    output [15:0] pht_correct,
+    output [15:0] match_ctr,
     output [15:0] PC,
     output taken,
+    output test_mode_o,
     output cur_prediction
     );
     
 //Memory Module
 wire fetch;
-memory mem_mod( .clk(clk), .fetch(fetch), .PC(PC),.taken(taken), .reset(reset));
+wire test_mode;
+assign test_mode_o = test_mode;
+memory #(.test(60000),.warmup(30000)) mem_mod( .clk(clk), .fetch(fetch), .PC(PC),.taken(taken), .reset(reset), .test_mode(test_mode));
 
 //Branch Predictor Interface Module
 wire [15:0] bpi_PC;
@@ -168,10 +173,14 @@ accuracy acc_mod(
     .clk(clk),
     .reset(reset),
     .check(check_out),
+    .match(pht3_match | pht2_match | pht1_match),
     .prediction(final_pred),
     .taken_o(taken_o),
     .branches(branches),
-    .correct(correct) 
+    .correct(correct),
+    .test_mode(test_mode),
+    .pht_correct(pht_correct),
+    .match_ctr(match_ctr)
     );
 
 

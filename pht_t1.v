@@ -42,7 +42,7 @@ module pht_t1 #(parameter INDEX_SIZE = 6, parameter TAG_SIZE = 6, parameter GHR_
     //Manually change this shit if adjusting pht index or tag values
     wire [INDEX_SIZE - 1:0] index = {2'b00, GHR_usable[GHR_LEN-1:0]} ^ PC[5:0];
     
-    wire [TAG_SIZE - 1:0] tag = PC[TAG_SIZE - 1:0] ^ GHR_usable[TAG_SIZE - 1: 0] ^ {GHR_usable[TAG_SIZE - 2:0],1'b0};
+    wire [TAG_SIZE - 1:0] tag = PC[TAG_SIZE - 1:0] ^ {2'b00,GHR_usable} ^ {1'b0,GHR_usable,1'b0};
     
     //Pred Counter Control Regs
     wire [(2**INDEX_SIZE) - 1:0] pht_preds;
@@ -57,9 +57,11 @@ module pht_t1 #(parameter INDEX_SIZE = 6, parameter TAG_SIZE = 6, parameter GHR_
     reg [TAG_SIZE - 1:0] tag_vals [(2**INDEX_SIZE) - 1: 0];
     
     //Outputs
-    assign can_alloc = pht_uses[index];
+    assign can_alloc = pht_uses[index] == 0;
     assign prediction = pht_preds[index];
     assign match = tag_vals[index] == tag;
+    
+    integer r_var;
     
     //Main Logic
     always @(posedge clk)
@@ -70,6 +72,11 @@ module pht_t1 #(parameter INDEX_SIZE = 6, parameter TAG_SIZE = 6, parameter GHR_
             pht_enable <= 0;
             pht_alloc <= 0;
             pht_uses_enable <= 0;
+            //Reset the tag values:
+            for(r_var = 0; r_var < (2**INDEX_SIZE); r_var = r_var + 1)
+            begin
+                tag_vals[r_var] <= 0; 
+            end
         end
         else
         begin
