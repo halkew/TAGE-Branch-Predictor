@@ -28,16 +28,21 @@ module pred_logic_vm #(parameter PHT_COUNT = 3)
     
     //Variable MUX generation with multiple predictors
     var_mux #(.predictors(4)) m1(.predictions(prediction),.selects(match),.pred(final_pred));
+    //Potentially make a variable, variable mux for this
     
 
-
+    wire [$clog2(PHT_COUNT):0] provider_wire = (match[3] ? 2'b11 : (match[2] ? 2'b10: (match[1] ? 2'b01 : 2'b00))); //index of provider
     reg [$clog2(PHT_COUNT):0] provider = 0;
+    wire altpred1 = match[3] & match[2];
+    wire altpred0 = (!match[3] & match[2] & match[1]) | (match[3] & !match[2] & match[1]);
+//    reg [$clog2(PHT_COUNT):0] temp_provider = 0; //test signals
+//    reg [$clog2(PHT_COUNT):0] temp_altprovider = 0; //test signals
     reg [$clog2(PHT_COUNT):0] altprovider = 0; //index of alternate
     reg [1:0] state;
     //reg [$clog2(PHT_COUNT):0] to_alloc;
-    reg [$clog2(PHT_COUNT):0] lop = 0; //lowest open predictor
-    
-    wire no_match = |(match); //if there are no matches it will be 0
+    //reg [$clog2(PHT_COUNT):0] lop = 0; //lowest open predictor
+    reg [$clog2(PHT_COUNT):0] lop = 0;
+    wire matches = |(match); //if there are no matches it will be 0
     wire correct = !(taken ^ final_pred) && !reset; // If they are the same its correct
     wire open_alloc = |(alloc); //At the current index there is a space to allocate
     wire diff_prov = altprovider != provider;//The alternate component and provider component will only be the same if there is no match
@@ -66,23 +71,15 @@ module pred_logic_vm #(parameter PHT_COUNT = 3)
             case (state)
             //Determines provider component and alternate component
             0: begin
-                //If there are no matches, provider and alternate are both 0 or base pred
-                if(!no_match)
+                //If there are matches, provider and alternate are both 0 or base pred
+                if(matches)
                 begin
                     // determine provider
-                    for (i = 1; i < PHT_COUNT+1; i = i + 1) begin
-                        if (match[i]) begin
-                            provider <= i;
-                        end
-                    end
+                      provider <= provider_wire;
                     
                     
                     // determine alternate
-                    for (i = 1; i < provider; i = i + 1) begin
-                        if (match[i]) begin
-                            altprovider <= i;
-                        end
-                    end
+                    altprovider <= {altpred1,altpred0};
                     check <= 1; // raises check flag
                     stall_bpi <= 1;
                     
@@ -95,6 +92,26 @@ module pred_logic_vm #(parameter PHT_COUNT = 3)
                     stall_bpi <= 1;
                     check <= 1;
                 end
+                
+                
+                //determining lop logic
+                if(provider_wire == 0)
+                begin
+                    if(can_alloc[1]) lop <= 1;
+                    else if(can_alloc[2]) lop <= 2;
+                    else if(can_alloc[3]) lop <= 3;
+                end
+                else if(provider_wire == 1)
+                begin
+                    if(can_alloc[2]) lop <= 2;
+                    else if(can_alloc[3]) lop <= 3;
+                end
+                else if(provider_wire == 2)
+                begin
+                    lop <= 3;
+                end
+                else lop <= 0;
+                
                 if(correct) state <= 1; //correct prediction
                 else state <= 2; //incorrect prediction
             end
@@ -128,23 +145,18 @@ module pred_logic_vm #(parameter PHT_COUNT = 3)
                 //Allocation necessary
                 begin
                     needs_alloc <= 1;
-                    //Gets the lowest predictor that has space for allocation; If no predictor lop = 0
-                    for (i = provider + 1; i < PHT_COUNT+1; i = i + 1) 
-                    begin
-                        if (can_alloc[i]) 
-                        begin
-                        if(lop == 0) lop <= i; // grabs the first instance where allocation can occur
-                        end
-                    end
                     
-                    if(lop != 0)
-                    //No greater predictor to allocate available
+                    if(lop == 0)
                     begin
-                        //all intermediary predictors are decremented
-                        for (i = provider + 1; i < PHT_COUNT; i = i + 1) 
-                        begin
-                            enable_use[i] <= 1;
-                            update_use[i] <= 0;
+                    //No greater predictor to allocate available
+                        if (provider == 2'b00) begin
+                            enable_use[1] <= 1;
+                            update_use[1] <= 1;
+                            enable_use[2] <= 1;
+                            update_use[2] <= 1;
+                        end else if (provider == 2'b01) begin
+                            enable_use[2] <= 1;
+                            update_use[2] <= 1;
                         end
                     end
                     else

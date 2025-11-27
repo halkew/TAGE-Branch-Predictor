@@ -75,9 +75,9 @@ module pht_t3 #(parameter INDEX_SIZE = 4, parameter TAG_SIZE = 4, parameter GHR_
     reg [TAG_SIZE - 1:0] tag_vals [(2**INDEX_SIZE) - 1: 0];
     
     //Outputs
-    assign can_alloc = pht_uses[index] == 0;
-    assign prediction = pht_preds[index];
-    assign match = tag_vals[index] == tag;
+    assign can_alloc = (pht_uses[index] == 0) && !reset;
+    assign prediction = (pht_preds[index]) && !reset;
+    assign match = (tag_vals[index] == tag) && !reset;
     
     integer r_var;
     
