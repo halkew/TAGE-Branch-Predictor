@@ -55,12 +55,12 @@ module pht_t3 #(parameter INDEX_SIZE = 4, parameter TAG_SIZE = 4, parameter GHR_
     
     wire [3:0] folded_ghr4;
     wire [2:0] folded_ghr3;
-    wire [3:0] folded_pc;
+    //wire [3:0] folded_pc;
     folder_4b f1(.fold(GHR_usable),.folded(folded_ghr4));
     folder_3b f2(.fold(GHR_usable),.folded(folded_ghr3));
-    folder_4b f3(.fold({48'b0,PC}),.folded(folded_pc));
+    //folder_4b f3(.fold({48'b0,PC}),.folded(folded_pc));
     
-    wire [TAG_SIZE - 1:0] tag = folded_pc ^ folded_ghr4 ^ {folded_ghr3,1'b0};
+    wire [TAG_SIZE - 1:0] tag = PC[TAG_SIZE - 1:0] ^ folded_ghr4 ^ {folded_ghr3,1'b0};
     
     //Pred Counter Control Regs
     wire [(2**INDEX_SIZE) - 1:0] pht_preds;
