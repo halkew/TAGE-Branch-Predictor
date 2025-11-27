@@ -45,14 +45,14 @@ module pht_t2 #(parameter INDEX_SIZE = 5, parameter TAG_SIZE = 5, parameter GHR_
     
     wire [4:0] folded_ghr5;
     wire [3:0] folded_ghr4;
-    wire [4:0] folded_pc;
+    //wire [4:0] folded_pc;
     folder_4b f1(.fold({48'b0,GHR_usable}),.folded(folded_ghr4));
     folder_5b f2(.fold({48'b0,GHR_usable}),.folded(folded_ghr5));
-    folder_5b f3(.fold({48'b0,PC}),.folded(folded_pc));
+    //folder_5b f3(.fold({48'b0,PC}),.folded(folded_pc));
     
     
     //Tried to use folding here
-    wire [TAG_SIZE - 1:0] tag = folded_pc ^ folded_ghr5 ^ {folded_ghr4,1'b0};//PC[TAG_SIZE - 1:0] ^ GHR_usable[TAG_SIZE - 1: 0] ^ {GHR_usable[TAG_SIZE - 2:0],1'b0};
+    wire [TAG_SIZE - 1:0] tag = PC[TAG_SIZE - 1:0] ^ folded_ghr5 ^ {folded_ghr4,1'b0};//PC[TAG_SIZE - 1:0] ^ GHR_usable[TAG_SIZE - 1: 0] ^ {GHR_usable[TAG_SIZE - 2:0],1'b0};
     
     //Pred Counter Control Regs
     wire [(2**INDEX_SIZE) - 1:0] pht_preds;

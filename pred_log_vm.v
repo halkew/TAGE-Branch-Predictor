@@ -69,7 +69,7 @@ module pred_logic_vm #(parameter PHT_COUNT = 3)
                 //If there are no matches, provider and alternate are both 0 or base pred
                 if(!no_match)
                 begin
-                    // determine alternate
+                    // determine provider
                     for (i = 1; i < PHT_COUNT+1; i = i + 1) begin
                         if (match[i]) begin
                             provider <= i;
@@ -133,12 +133,12 @@ module pred_logic_vm #(parameter PHT_COUNT = 3)
                     begin
                         if (can_alloc[i]) 
                         begin
-                            lop <= i;
+                        if(lop == 0) lop <= i; // grabs the first instance where allocation can occur
                         end
                     end
                     
                     if(lop != 0)
-                    //No greater predictor available
+                    //No greater predictor to allocate available
                     begin
                         //all intermediary predictors are decremented
                         for (i = provider + 1; i < PHT_COUNT; i = i + 1) 
@@ -156,18 +156,13 @@ module pred_logic_vm #(parameter PHT_COUNT = 3)
                     end
                     
                 end
-                else
-                //Allocation not necessary
-                begin
-                     //If there are different providers, we need to update the useful counter of provider component
-                     if(diff_prov)
-                     begin
-                        enable_use[provider] <= 1;
-                        update_use[provider] <= 0;
-                     end
-                end
+                 //If there are different providers, we need to update the useful counter of provider component
+                 if(diff_prov)
+                 begin
+                    enable_use[provider] <= 1;
+                    update_use[provider] <= 0;
+                 end
                 
-
 
                 state <= 3;
             end
