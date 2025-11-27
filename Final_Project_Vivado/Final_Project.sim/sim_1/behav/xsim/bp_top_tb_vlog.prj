@@ -1,0 +1,35 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../Final_Project.srcs/sources_1/new/pred_ctr.v" \
+"../../../../Final_Project.srcs/sources_1/new/use_ctr.v" \
+"../../../../Final_Project.srcs/sources_1/new/pht.v" \
+"../../../../Final_Project.srcs/sources_1/new/base_pred.v" \
+"../../../../Final_Project.srcs/sources_1/new/memory.v" \
+"../../../../Final_Project.srcs/sources_1/new/accuracy.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/bpi.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/prediction.v" \
+"../../../../Final_Project.srcs/sources_1/new/top_bp.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/pht_t2.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/pht_t3.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/pht_t1.v" \
+"../../../../Final_Project.srcs/sources_1/new/var_mux.v" \
+"../../../../Final_Project.srcs/sources_1/new/mux.v" \
+"../../../../Final_Project.srcs/sources_1/new/pred_log_vm.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/folder_7b.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/folder_5b.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/folder_6b.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/folder_8b.v" \
+"../../../../Final_Project.srcs/sources_1/imports/TAGE-Branch-Predictor/folder_4b.v" \
+"../../../../Final_Project.srcs/sources_1/new/folder_3b.v" \
+"../../../../Final_Project.srcs/sim_1/new/base_pred_tb.v" \
+"../../../../Final_Project.srcs/sim_1/new/ctr_tb.v" \
+"../../../../Final_Project.srcs/sim_1/imports/TAGE-Branch-Predictor/pht_tb_v1.v" \
+"../../../../Final_Project.srcs/sim_1/new/memory_tb.v" \
+"../../../../Final_Project.srcs/sim_1/new/bp_top_tb.v" \
+"../../../../Final_Project.srcs/sim_1/new/var_mux_tb.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort
