@@ -31,7 +31,7 @@ module memory #(parameter test = 5000, parameter warmup = 30000)(
     initial
     begin
         //Where the memory is being loaded in from
-        $readmemb("30k_warmup.mem",ROM_warmup);
+        $readmemb("30k_warmup1.mem",ROM_warmup);
         $readmemb("60k_test1.mem",ROM_test);
     end
     

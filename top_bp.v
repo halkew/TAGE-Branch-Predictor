@@ -24,13 +24,14 @@ wire br_dir;
 wire [63:0] bpi_GHR;
 wire pred_logic_stall_bpi;
 wire pred_logic_alloc;
+wire pc_valid;
 bpi branch_interface_mod(
 .PC(PC),.taken_i(taken),
                         .reset(reset), .clk(clk), 
                         .fetch(fetch), .PC_o(bpi_PC),
                         .br_ret(br_ret), .br_dir(br_dir),
                         .ghr(bpi_GHR),.stall_bpi(pred_logic_stall_bpi),
-                        .alloc(pred_logic_alloc));
+                        .alloc(pred_logic_alloc), .pc_valid(pc_valid));
                         
 //Predictors -----------------------------------------------------------------------------------------------
 
@@ -134,6 +135,7 @@ pred_logic_vm #(.PHT_COUNT(3)) pred_logic
     (
     .reset(reset),
     .clk(clk),
+    .pc_valid(pc_valid),
     .prediction({pht3_prediction,pht2_prediction,pht1_prediction,base_prediction}),
     .match({pht3_match,pht2_match,pht1_match}),
     .can_alloc({pht3_can_alloc,pht2_can_alloc,pht1_can_alloc}),
