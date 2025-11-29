@@ -2,8 +2,8 @@
 
 module bp_top_tb;
 
-wire clk;
-wire reset;
+reg clk;
+reg reset;
 wire [15:0] branches;
 wire [15:0] correct;
 wire [15:0] pht_correct;
