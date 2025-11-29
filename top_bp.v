@@ -131,7 +131,7 @@ assign cur_prediction = final_pred;
 wire taken_o;
 
 //Varun's Module
-pred_logic_vm #(.PHT_COUNT(3)) pred_logic
+pred_logic_ac #(.PHT_COUNT(3)) pred_logic
     (
     .reset(reset),
     .clk(clk),
