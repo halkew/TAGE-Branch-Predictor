@@ -16,7 +16,7 @@ module bpi(
     output [15:0] PC_o,
     output br_ret,
     output br_dir,
-    outputeg [63:0] ghr
+    output [63:0] ghr
 );
 
     reg [1:0] state;
