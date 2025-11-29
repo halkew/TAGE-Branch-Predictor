@@ -12,12 +12,12 @@ module bpi_ac(
     input clk,
     input alloc,
     input stall_bpi,
-    output pc_valid,
-    output fetch,
-    output [15:0] PC_o,
-    output br_ret,
-    output br_dir,
-    output [63:0] ghr
+    output wire pc_valid,
+    output wire fetch,
+    output wire [15:0] PC_o,
+    output wire br_ret,
+    output wire br_dir,
+    output wire [63:0] ghr
 );
 
     reg [1:0] state;
