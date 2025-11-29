@@ -12,6 +12,7 @@ module bpi_ac(
     input clk,
     input alloc,
     input stall_bpi,
+    output pc_valid,
     output fetch,
     output [15:0] PC_o,
     output br_ret,
@@ -30,6 +31,7 @@ module bpi_ac(
             br_ret = 1'b0;
             br_dir = 1'b0;
             ghr = 64'b0;
+            pc_valid = 1'b0;
             state <= 2'b00;
         end else begin
             state <= next_state;
@@ -57,10 +59,12 @@ module bpi_ac(
                 ghr = {ghr[62:0], taken_i};
                 br_ret = 1'b0;
                 br_dir = 1'b0;
+                pc_valid = 1'b0;
             end
             2'b01: begin
                 fetch = 1'b0;
                 PC_o = PC;
+                pc_valid = 1'b1;
             end
             2'b10: begin
                 if (!alloc) begin
