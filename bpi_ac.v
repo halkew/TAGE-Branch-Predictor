@@ -5,7 +5,7 @@
 //State 01: PC is retrieved and send to the corresponding PHTs
 //State 10: br_ret is set to high and br_dir is set to the taken_i value
 
-module bpi(
+module bpi_ac(
     input [15:0] PC,
     input taken_i,
     input reset,
