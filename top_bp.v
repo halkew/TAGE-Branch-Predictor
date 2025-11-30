@@ -25,7 +25,7 @@ wire [63:0] bpi_GHR;
 wire pred_logic_stall_bpi;
 wire pred_logic_alloc;
 wire pc_valid;
-bpi branch_interface_mod(
+bpi_ac branch_interface_mod(
 .PC(PC),.taken_i(taken),
                         .reset(reset), .clk(clk), 
                         .fetch(fetch), .PC_o(bpi_PC),
@@ -131,7 +131,7 @@ assign cur_prediction = final_pred;
 wire taken_o;
 
 //Varun's Module
-pred_logic_vm #(.PHT_COUNT(3)) pred_logic
+pred_logic_ac #(.PHT_COUNT(3)) pred_logic
     (
     .reset(reset),
     .clk(clk),
