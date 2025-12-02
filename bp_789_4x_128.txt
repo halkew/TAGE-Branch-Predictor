@@ -1,0 +1,91 @@
+Warning: Design 'top_bp' has '1' unresolved references. For more detailed information, use the "link" command. (UID-341)
+ 
+****************************************
+Report : area
+Design : top_bp
+Version: T-2022.03-SP2
+Date   : Mon Dec  1 20:01:00 2025
+****************************************
+
+Information: Updating design information... (UID-85)
+Warning: Design 'top_bp' contains 3 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+Library(s) Used:
+
+    gscl45nm (File: /home/ecelrc/students/hy7557/vlsi1_25/lab3/gscl45nm.db)
+
+Number of ports:                        16285
+Number of nets:                        152840
+Number of cells:                       139239
+Number of combinational cells:         121182
+Number of sequential cells:             15984
+Number of macros/black boxes:               0
+Number of buf/inv:                      44088
+Number of references:                      15
+
+Combinational area:             269872.367164
+Buf/Inv area:                    67717.172796
+Noncombinational area:          127513.969471
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                397386.336635
+Total area:                 undefined
+
+Information: This design contains black box (unknown) components. (RPT-8)
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+Warning: Design has unannotated black box outputs. (PWR-428)
+ 
+****************************************
+Report : power
+        -analysis_effort low
+Design : top_bp
+Version: T-2022.03-SP2
+Date   : Mon Dec  1 20:01:21 2025
+****************************************
+
+
+Library(s) Used:
+
+    gscl45nm (File: /home/ecelrc/students/hy7557/vlsi1_25/lab3/gscl45nm.db)
+
+
+Operating Conditions: typical   Library: gscl45nm
+Wire Load Model Mode: top
+
+
+Global Operating Voltage = 1.1  
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1nW
+
+
+Attributes
+----------
+i - Including register clock pin internal power
+
+
+  Cell Internal Power  = 246.3974 uW   (27%)
+  Net Switching Power  = 651.6035 uW   (73%)
+                         ---------
+Total Dynamic Power    = 898.0008 uW  (100%)
+
+Cell Leakage Power     =   1.7594 mW
+
+
+                 Internal         Switching           Leakage            Total
+Power Group      Power            Power               Power              Power   (   %    )  Attrs
+--------------------------------------------------------------------------------------------------
+io_pad             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+memory             0.0000            0.0000            0.0000            0.0000  (   0.00%)
+black_box          0.0000            0.0000            0.0000            0.0000  (   0.00%)
+clock_network      0.2458            0.6510        5.0178e+05            1.1737  (  44.17%)  i
+register       5.4300e-05        8.4489e-05        8.7870e+05            1.1037  (  41.53%)
+sequential         0.0000            0.0000            0.0000            0.0000  (   0.00%)
+combinational  5.3862e-04        5.6805e-04        3.7891e+05            0.3800  (  14.30%)
+--------------------------------------------------------------------------------------------------
+Total              0.2464 mW         0.6517 mW     1.7594e+06 nW         2.6574 mW
